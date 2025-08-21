@@ -14,21 +14,17 @@ function readAllTrainees(req, res) {
 
 // Read specific Trainee by Name/Email
 function readATrainee(req, res) {
-    
-         let { name, email } = req.body;
+    let search = req.query.search;
 
-        TraineesModel.find({ $or: [{ "name": name }, { "email": email }] })
-            .then(trainees => {
-                (trainees.length > 0) 
-                    ? 
-                    res.json(trainees)
-                    :
-                    res.json("No Trainees found!!!");
-            })
-    .catch ((err) => {
-        res.json(err.message);
-    });
+    TraineesModel.find({ $or: [{ "name": search }, { "email": search }] })
+        .then(trainees => {
+            (trainees.length > 0) 
+                ? res.json(trainees)
+                : res.json("No Trainees found!!!");
+        })
+        .catch(err => res.json(err.message));
 }
+
 // readTrainee("Tony", "tony@gmail.com");
 
 // Add a new Trainee
@@ -98,6 +94,7 @@ module.exports = {
     deleteATrainee
 
 }
+
 
 
 
