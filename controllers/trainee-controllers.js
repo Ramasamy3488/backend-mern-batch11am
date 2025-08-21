@@ -1,15 +1,14 @@
 const TraineesModel = require('../models/trainee-models');
 
 // Read all Trainees
-function readAllTrainees(req, res) {
-    try {
+function readAllTrainees(req, res) {   
         TraineesModel.find({})
             .then(trainees => {
                 res.json(trainees);
             })
-    } catch (err) {
+    .catch ((err)=> {
         res.json(err.message);
-    }
+    });
 }
 // readAllTrainees();
 
@@ -99,6 +98,7 @@ module.exports = {
     deleteATrainee
 
 }
+
 
 
 
