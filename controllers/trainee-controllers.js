@@ -18,7 +18,7 @@ function readATrainee(req, res) {
     try {
         let {name, email} = req.body;
 
-        TraineesModel.find({"name": name, "email": email})
+        TraineesModel.find({ $or: [{ "name": name }, { "email": email }] })
             .then(trainees => {
                 (trainees.length > 0) 
                     ? 
@@ -97,4 +97,5 @@ module.exports = {
     addATrainee,
     updateATrainee,
     deleteATrainee
+
 }
