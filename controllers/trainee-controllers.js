@@ -14,8 +14,10 @@ function readAllTrainees(req, res) {
 
 // Read specific Trainee by Name/Email
 function readATrainee(req, res) {
-    let search = req.body;
+    // let {name,email} = req.body;  // "name": name, "email": email with getting both value from frontend
 
+  const searchTerm = req.body.name || req.body.email;  // pick one
+  const search = new RegExp(searchTerm, 'i');   // case-insensitive
     TraineesModel.find({ $or: [{ "name": search }, { "email": search }] })
         .then(trainees => {
             (trainees.length > 0) 
@@ -94,6 +96,7 @@ module.exports = {
     deleteATrainee
 
 }
+
 
 
 
