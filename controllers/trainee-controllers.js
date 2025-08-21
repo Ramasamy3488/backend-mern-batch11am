@@ -14,7 +14,7 @@ function readAllTrainees(req, res) {
 
 // Read specific Trainee by Name/Email
 function readATrainee(req, res) {
-    try {
+    
          let { search } = req.body;
 
         TraineesModel.find({ $or: [{ "name": search }, { "email": search }] })
@@ -25,9 +25,9 @@ function readATrainee(req, res) {
                     :
                     res.json("No Trainees found!!!");
             })
-    } catch (err) {
+    .catch ((err) => {
         res.json(err.message);
-    }
+    });
 }
 // readTrainee("Tony", "tony@gmail.com");
 
@@ -98,6 +98,7 @@ module.exports = {
     deleteATrainee
 
 }
+
 
 
 
