@@ -24,7 +24,7 @@ async function readATrainee(req, res) {
         if (trainees.length > 0) {
             return res.json(trainees);
         } else {
-            return res.json({ message: "No Trainees found!!!" });
+            return res.json([]);
         }
     } catch (err) {
         console.error("readATrainee error:", err);
@@ -98,3 +98,4 @@ module.exports = {
     updateATrainee,
     deleteATrainee
 };
+
