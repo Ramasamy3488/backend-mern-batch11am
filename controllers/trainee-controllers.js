@@ -45,7 +45,7 @@ async function addATrainee(req, res) {
 
         (traineeExists.length > 0)
             ?
-            res.json({ message: "Trainee Already Exists!" });
+            res.json({ message: "Trainee Already Exists!" })
             :
             (await Trainee.save(), res.json({ message: "Trainee Added Successfully!" });
     } catch(err) {
@@ -67,7 +67,7 @@ function updateATrainee(req, res) {
             .then(results => {
                 (results.modifiedCount > 0)
                     ?
-                    res.json({ message: "Trainee Updated Successfully!" });                    
+                    res.json({ message: "Trainee Updated Successfully!" })                    
                     :
                     res.json({ message: "Unable to update the Trainee!" });
             })
@@ -84,7 +84,7 @@ function deleteATrainee(req, res) {
             .then(results => {
                 (results.deletedCount > 0)
                     ?
-                    res.json({ message: "Trainee Deleted Successfully!" });
+                    res.json({ message: "Trainee Deleted Successfully!" })
                     :
                     res.json({ message: "Unable to delete the Trainee!" });
             })
@@ -102,6 +102,7 @@ module.exports = {
     deleteATrainee
 
 }
+
 
 
 
