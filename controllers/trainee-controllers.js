@@ -18,14 +18,14 @@ async function readATrainee(req, res) {
         const { search } = req.body;
         const searchValue = search.trim(); // remove spaces
 
-        const trainees = await TraineesModel.findOne({
+        const trainee = await TraineesModel.findOne({
             $or: [
                 { email: { $regex: `^${searchValue}$`, $options: 'i' } },
                 { name: { $regex: `^${searchValue}$`, $options: 'i' } }
             ]
         });
 
-        trainee ? res.json(trainee) : res.json("No Trainee Found!");
+        (trainee.length>0) ? res.json(trainee) : res.json("No Trainee Found!");
     } catch (err) {
         res.status(500).json(err.message);
     }
@@ -100,6 +100,7 @@ module.exports = {
     deleteATrainee
 
 }
+
 
 
 
