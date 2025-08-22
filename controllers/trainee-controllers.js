@@ -26,7 +26,7 @@ async function readATrainee(req, res) {
                     ? 
                     res.json(trainees)
                     :
-                    res.json("No Trainees found!!!");
+                    res.json({ message: "No Trainees found!!!" });
             })
     } catch (err) {
         res.json(err.message);
@@ -45,9 +45,9 @@ async function addATrainee(req, res) {
 
         (traineeExists.length > 0)
             ?
-            res.json("Trainee Already Exists!")
+            res.json({ message: "Trainee Already Exists!" });
             :
-            (await Trainee.save(), res.json("Trainee Added Successfully!"));
+            (await Trainee.save(), res.json({ message: "Trainee Added Successfully!" });
     } catch(err) {
         let errorList = [];
         if(err.errors) {
@@ -67,9 +67,9 @@ function updateATrainee(req, res) {
             .then(results => {
                 (results.modifiedCount > 0)
                     ?
-                    res.json("Trainee Updated Successfully!")
+                    res.json({ message: "Trainee Updated Successfully!" });                    
                     :
-                    res.json("Unable to update the Trainee!");
+                    res.json({ message: "Unable to update the Trainee!" });
             })
     } catch (err) {
         res.json(err.message);
@@ -84,9 +84,9 @@ function deleteATrainee(req, res) {
             .then(results => {
                 (results.deletedCount > 0)
                     ?
-                    res.json("Trainee Deleted Successfully!")
+                    res.json({ message: "Trainee Deleted Successfully!" });
                     :
-                    res.json("Unable to delete the Trainee!");
+                    res.json({ message: "Unable to delete the Trainee!" });
             })
     } catch (err) {
         res.json(err.message);
@@ -102,6 +102,7 @@ module.exports = {
     deleteATrainee
 
 }
+
 
 
 
