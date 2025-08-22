@@ -1,98 +1,95 @@
 const TraineesModel = require('../models/trainee-models');
 
 // Read all Trainees
-function readAllTrainees(req, res) {   
-        TraineesModel.find({})
-            .then(trainees => {
-                res.json(trainees);
-            })
-    .catch ((err)=> {
-        res.json(err.message);
-    });
+async function readAllTrainees(req, res) {
+    try {
+        const trainees = await TraineesModel.find({});
+        return res.json(trainees);
+    } catch (err) {
+        console.error("readAllTrainees error:", err);
+        return res.status(500).json({ error: err.message });
+    }
 }
-// readAllTrainees();
 
 // Read specific Trainee by Name/Email
 async function readATrainee(req, res) {
     try {
-         const searchTerm = req.body.name || req.body.email;
-         const search = new RegExp(searchTerm, 'i');
+        const searchTerm = req.body.name || req.body.email;
+        const search = new RegExp(searchTerm, 'i');
 
-        TraineesModel.find({$or: [{"name": search}, {"email": search}]})        
-            .then(trainees => {
-                // console.log(trainees);
-                // console.log(req.body);
-                (trainees.length > 0) 
-                    ? 
-                    res.json(trainees)
-                    :
-                    res.json({ message: "No Trainees found!!!" });
-            })
+        const trainees = await TraineesModel.find({
+            $or: [{ name: search }, { email: search }]
+        });
+
+        if (trainees.length > 0) {
+            return res.json(trainees);
+        } else {
+            return res.json({ message: "No Trainees found!!!" });
+        }
     } catch (err) {
-        res.json(err.message);
+        console.error("readATrainee error:", err);
+        return res.status(500).json({ error: err.message });
     }
 }
-
-// readTrainee("Tony", "tony@gmail.com");
 
 // Add a new Trainee
 async function addATrainee(req, res) {
-
-    const Trainee = new TraineesModel(req.body);
-
     try {
-        let traineeExists = await TraineesModel.find({"email": req.body.email});
+        const traineeExists = await TraineesModel.find({ email: req.body.email });
 
-        (traineeExists.length > 0)
-            ?
-            res.json({ message: "Trainee Already Exists!" })
-            :
-            (await Trainee.save(), res.json({ message: "Trainee Added Successfully!" });
-    } catch(err) {
+        if (traineeExists.length > 0) {
+            return res.json({ message: "Trainee Already Exists!" });
+        } else {
+            const Trainee = new TraineesModel(req.body);
+            await Trainee.save();
+            return res.json({ message: "Trainee Added Successfully!" });
+        }
+    } catch (err) {
+        console.error("addATrainee error:", err);
         let errorList = [];
-        if(err.errors) {
-            for(let temp in err.errors) {
-                errorList.push(err.errors[temp].message)
+        if (err.errors) {
+            for (let temp in err.errors) {
+                errorList.push(err.errors[temp].message);
             }
         }
-        res.json(errorList);
+        return res.status(500).json(errorList.length ? errorList : { error: err.message });
     }
 }
-// addTrainee("Raju", "raju@gmail.com", "January", "2023", "7-9pm");
 
 // Update a specific Trainee
-function updateATrainee(req, res) {
+async function updateATrainee(req, res) {
     try {
-        TraineesModel.updateOne({"email": req.body.email}, {$set: req.body})
-            .then(results => {
-                (results.modifiedCount > 0)
-                    ?
-                    res.json({ message: "Trainee Updated Successfully!" })                    
-                    :
-                    res.json({ message: "Unable to update the Trainee!" });
-            })
+        const results = await TraineesModel.updateOne(
+            { email: req.body.email },
+            { $set: req.body }
+        );
+
+        if (results.modifiedCount > 0) {
+            return res.json({ message: "Trainee Updated Successfully!" });
+        } else {
+            return res.json({ message: "Unable to update the Trainee!" });
+        }
     } catch (err) {
-        res.json(err.message);
+        console.error("updateATrainee error:", err);
+        return res.status(500).json({ error: err.message });
     }
 }
-// updateTrainee("Dinesh", "srinanoo@gmail.com", "January", 2023, "7-9pm");
 
 // Delete a specific Trainee
-function deleteATrainee(req, res) {
+async function deleteATrainee(req, res) {
     try {
-        TraineesModel.deleteOne({"email": req.body.email})
-            .then(results => {
-                (results.deletedCount > 0)
-                    ?
-                    res.json({ message: "Trainee Deleted Successfully!" })
-                    :
-                    res.json({ message: "Unable to delete the Trainee!" });
-            })
+        const results = await TraineesModel.deleteOne({ email: req.body.email });
+
+        if (results.deletedCount > 0) {
+            return res.json({ message: "Trainee Deleted Successfully!" });
+        } else {
+            return res.json({ message: "Unable to delete the Trainee!" });
+        }
     } catch (err) {
-        res.json(err.message);
+        console.error("deleteATrainee error:", err);
+        return res.status(500).json({ error: err.message });
     }
 }
-// deleleteTrainee("raju@gmail.com");
 
 module.exports = {
     readAllTrainees,
@@ -100,28 +97,4 @@ module.exports = {
     addATrainee,
     updateATrainee,
     deleteATrainee
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+};
