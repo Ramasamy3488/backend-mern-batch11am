@@ -13,19 +13,20 @@ function readAllTrainees(req, res) {
 // readAllTrainees();
 
 // Read specific Trainee by Name/Email
-function readATrainee(req, res) {
-    const searchTerm = req.body.search;              // get search value
-    const search = new RegExp(searchTerm, 'i');      // case-insensitive regex
+async function readATrainee(req, res) {
+    try {
+        const { search } = req.body; // can be email or name
+        const trainee = await TraineesModel.findOne({
+            $or: [
+                { email: search },
+                { name: search }
+            ]
+        });
 
-    TraineesModel.find({
-        $or: [{ name: search }, { email: search }]
-         })
-        .then(trainees => {
-            (trainees.length > 0) 
-                ? res.json(trainees)
-                : res.json("No Trainees found!!!");
-        })
-        .catch(err => res.json(err.message));
+        trainee ? res.json(trainee) : res.json("No Employee Found!");
+    } catch (err) {
+        res.status(500).json(err.message);
+    }
 }
 
 // readTrainee("Tony", "tony@gmail.com");
@@ -97,6 +98,7 @@ module.exports = {
     deleteATrainee
 
 }
+
 
 
 
