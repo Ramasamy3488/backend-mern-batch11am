@@ -15,11 +15,13 @@ function readAllTrainees(req, res) {
 // Read specific Trainee by Name/Email
 async function readATrainee(req, res) {
     try {
-        const { search } = req.body; // can be email or name
-        const trainee = await TraineesModel.findOne({
+        const { search } = req.body;
+        const searchValue = search.trim(); // remove spaces
+
+        const employee = await Employee.findOne({
             $or: [
-                { email: search },
-                { name: search }
+                { email: { $regex: `^${searchValue}$`, $options: 'i' } },
+                { name: { $regex: `^${searchValue}$`, $options: 'i' } }
             ]
         });
 
@@ -98,6 +100,7 @@ module.exports = {
     deleteATrainee
 
 }
+
 
 
 
