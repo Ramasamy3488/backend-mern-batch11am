@@ -15,25 +15,21 @@ function readAllTrainees(req, res) {
 // Read specific Trainee by Name/Email
 async function readATrainee(req, res) {
     try {
-        const { name, email } = req.body; // CHANGED from req.query to req.body
+         const searchTerm = req.body.name || req.body.email;
+         const search = new RegExp(searchTerm, 'i');
 
-        if (!name && !email) {
-            return res.status(400).json({ message: "No search criteria provided." });
-        }
-
-        const query = {};
-        if (name) query.name = name;
-        if (email) query.email = email;
-
-        const trainees = TraineesModel.find(query);
-
-        if (trainees.length > 0) {
-            return res.status(200).json(trainees);
-        } else {
-            return res.status(404).json({ message: "No trainees found." });
-        }
+        TraineesModel.find({$or: [{"name": search}, {"email": search}]})        
+            .then(trainees => {
+                // console.log(trainees);
+                // console.log(req.body);
+                (trainees.length > 0) 
+                    ? 
+                    res.json(trainees)
+                    :
+                    res.json("No Trainees found!!!");
+            })
     } catch (err) {
-        return res.status(500).json({ error: err.message });
+        res.json(err.message);
     }
 }
 
@@ -106,6 +102,7 @@ module.exports = {
     deleteATrainee
 
 }
+
 
 
 
