@@ -15,23 +15,25 @@ function readAllTrainees(req, res) {
 // Read specific Trainee by Name/Email
 async function readATrainee(req, res) {
     try {
-        const { email, name } = req.body;
+        const { name, email } = req.body; // CHANGED from req.query to req.body
 
-        if (!email && !name) 
-            return res.status(400).json("Please provide email or name!");
+        if (!name && !email) {
+            return res.status(400).json({ message: "No search criteria provided." });
+        }
 
-        const trainee = await TraineesModel.findOne({
-            $or: [
-                email ? { email: { $regex: `^${email.trim()}$`, $options: 'i' } } : null,
-                name ? { name: { $regex: `^${name.trim()}$`, $options: 'i' } } : null
-            ].filter(Boolean) // remove nulls
-        });
+        const query = {};
+        if (name) query.name = name;
+        if (email) query.email = email;
 
-        trainee
-            ? res.json(trainee)
-            : res.json("No Trainee Found!");
+        const trainees = TraineesModel.find(query);
+
+        if (trainees.length > 0) {
+            return res.status(200).json(trainees);
+        } else {
+            return res.status(404).json({ message: "No trainees found." });
+        }
     } catch (err) {
-        res.status(500).json(err.message);
+        return res.status(500).json({ error: err.message });
     }
 }
 
@@ -104,6 +106,7 @@ module.exports = {
     deleteATrainee
 
 }
+
 
 
 
